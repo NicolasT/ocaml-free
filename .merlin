@@ -1,0 +1,7 @@
+S src
+
+B _build
+B _build/src
+
+PKG lwt
+PKG lwt.unix

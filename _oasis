@@ -1,0 +1,34 @@
+OASISFormat: 0.4
+Name:        free
+Version:     999
+Synopsis:    A 'free monad' implementation
+Authors:     Nicolas Trangez
+License:     LGPL-2.1 with OCaml linking exception
+Homepage:    http://github.com/NicolasT/ocaml-free
+
+BuildTools:  ocamlbuild
+Plugins:     META (0.4), StdFiles (0.4), DevFiles (0.4)
+
+Library free
+  Path:            src
+  FindlibName:     free
+  Modules:         Free
+  InternalModules: Free_monad,
+                   Free_utils,
+                   Free_functor,
+                   Free_applicative
+  
+Executable "free-demo"
+  Path:         .
+  Install:      false
+  MainIs:       free_demo.ml
+  BuildDepends: free,
+                lwt,
+                lwt.unix
+  
+SourceRepository head
+  Type:     git
+  Location: git://github.com/NicolasT/ocaml-free.git
+  Branch:   master
+  Browser:  http://github.com/NicolasT/ocaml-free
+  
