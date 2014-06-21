@@ -31,10 +31,36 @@ let demo_program =
     let (>>=) = Demo.bind in
 
     print "abc" >>= fun () ->
+    print "def" >>= fun () ->
     random >>= fun rnd ->
+    print "g" >>= fun () -> print "h" >>= fun () -> print "i" >>= fun () ->
     if rnd > 42
         then abort "Randoms can't exceed 42!"
         else print (Printf.sprintf "Random was %d" rnd)
+
+
+let optimize : 'a Demo.t -> 'a Demo.t =
+    let (>>=) = Demo.bind in
+
+    let rec loop = function
+      | Demo.Free a -> begin match a with
+          | Demo.F.Print (s, n) ->
+              begin match loop (n ()) with
+                (* 2 or more consecutive 'print' actions become a single 'print'
+                 * of the concatenated string
+                 *)
+                | Demo.Free (Demo.F.Print (s', n')) ->
+                    Demo.print (s ^ s') >>= n'
+                | Demo.Free (Demo.F.Random _ | Demo.F.Abort _) ->
+                    Demo.print s >>= fun () -> loop (n ())
+                | Demo.Pure v -> Demo.Pure v
+          end
+          | Demo.F.Random n -> Demo.Free (Demo.F.Random (fun rnd -> loop (n rnd)))
+          | Demo.F.Abort s -> Demo.Free (Demo.F.Abort s)
+      end
+      | Demo.Pure a -> Demo.Pure a
+    in
+    loop
 
 (* An interpreter for demo programs. This one uses Pervasives IO *)
 let run_demo =
@@ -75,7 +101,7 @@ let run_demo_lwt =
 let main () =
     run_demo demo_program;
     flush_all ();
-    Lwt_main.run (run_demo_lwt demo_program)
+    Lwt_main.run (run_demo_lwt (optimize demo_program))
 ;;
 
 main ()
