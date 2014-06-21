@@ -5,7 +5,10 @@ module type Monad = sig
 end
 
 module Make(F : Free_functor.Functor) : sig
-    include Monad
+    type 'a t = Pure of 'a
+              | Free of ('a t) F.t
+
+    include Monad with type 'a t := 'a t
 
     val lift : 'a F.t -> 'a t
     val iter : ('a F.t -> 'a) -> 'a t -> 'a
