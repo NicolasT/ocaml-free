@@ -1,13 +1,14 @@
-OASISFormat: 0.4
-Name:        free
-Version:     999
-Synopsis:    A 'free monad' implementation
-Authors:     Nicolas Trangez
-License:     LGPL-2.1 with OCaml linking exception
-Homepage:    http://github.com/NicolasT/ocaml-free
+OASISFormat:   0.4
+Name:          free
+Version:       999
+Synopsis:      A 'free monad' implementation
+Authors:       Nicolas Trangez
+License:       LGPL-2.1 with OCaml linking exception
+Homepage:      http://github.com/NicolasT/ocaml-free
 
-BuildTools:  ocamlbuild
-Plugins:     META (0.4), StdFiles (0.4), DevFiles (0.4)
+BuildTools:    ocamlbuild
+Plugins:       META (0.4), StdFiles (0.4), DevFiles (0.4)
+AlphaFeatures: ocamlbuild_more_args
 
 Library free
   Path:            src
@@ -25,6 +26,15 @@ Executable "free-demo"
   BuildDepends: free,
                 lwt,
                 lwt.unix
+  
+Document "free_api"
+  Type:                 ocamlbuild (0.4)
+  BuildTools:           ocamldoc
+
+  Title:                API Reference for Free
+  XOcamlbuildPath:      .
+  XOcamlbuildExtraArgs: "-docflags '-colorize-code -short-functors -charset utf-8'"
+  XOcamlbuildLibraries: free
   
 SourceRepository head
   Type:     git
