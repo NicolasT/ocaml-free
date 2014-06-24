@@ -16,8 +16,10 @@ module Demo = struct
 
     (* Magic! *)
     module M = Free.Monad.Make(F)
-
     include M
+
+    module M' = Free.Monad.Utils(M)
+    include M'
 
     (* Accessors for the actions. These could be generated mechanically. *)
     let print s = lift (F.Print (s, Free.Utils.id))
@@ -36,7 +38,8 @@ let demo_program =
     print "g" >>= fun () -> print "h" >>= fun () -> print "i" >>= fun () ->
     if rnd > 42
         then abort "Randoms can't exceed 42!"
-        else print (Printf.sprintf "Random was %d" rnd)
+        else print (Printf.sprintf "Random was %d" rnd) >>= fun () ->
+    replicateM_ 5 (print "a")
 
 
 let optimize : 'a Demo.t -> 'a Demo.t =
